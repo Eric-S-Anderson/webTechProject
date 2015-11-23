@@ -12,6 +12,7 @@
     <body>
         <script>
             var FB;
+            var highScore;
             // This is called with the results from from FB.getLoginStatus().
             function statusChangeCallback(response) {
                 console.log('statusChangeCallback');
@@ -23,6 +24,7 @@
                 if (response.status === 'connected') {
                     // Logged into your app and Facebook.
                     testAPI();
+                    getHighScore();
                 } else if (response.status === 'not_authorized') {
                     // The person is logged into Facebook, but not your app.
                     document.getElementById('status').innerHTML = 'Please log ' +
@@ -48,7 +50,7 @@
             
             window.fbAsyncInit = function() {
                 FB.init({
-                    appId      : '827551624030682',
+                    appId      : '832926020159909',
                     cookie     : true,
                     xfbml      : true,
                     version    : 'v2.5'
@@ -74,11 +76,49 @@
                       'Thanks for logging in, ' + response.name + '!';
                 });
             }
+            
+            function getHighScore(){
+                FB.api(
+                    "/me/scores",
+                    function (response) {
+                        if (response && !response.error) {
+                            if (response.data.length === 0){
+                                document.getElementById('highScore').innerHTML =
+                                    'High Score: 0';
+                                highScore = 0;
+                            }else{
+                                document.getElementById('highScore').innerHTML =
+                                    'High Score: ' + response.data[0].score;
+                                highScore = response.data[0].score;
+                            }
+                        }
+                    }
+                );
+            }
+            
+            function postHighScore(){
+                var newScore = 0;
+                newScore = document.getElementById('newScore').value;
+                if (newScore > highScore){
+                    FB.api(
+                        "/me/scores",
+                        "POST",
+                        {"score": newScore.toString()},
+                        function (response) {
+                            if (response && !response.error) {
+                                getHighScore();
+                            }else{
+                                getHighScore();
+                            }
+                        }
+                    );
+                }
+            }
         </script>
         <p>
             This is where our project will appear!
         </p>
-        <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+        <fb:login-button scope="public_profile,email,publish_actions" onlogin="checkLoginState();">
         </fb:login-button>
 
         <div id="status">
@@ -88,6 +128,16 @@
             data-share="true"
             data-width="450"
             data-show-faces="true">
+        </div>
+        <div id="highScore" class="score"></div>
+        <div>
+            <form onsubmit=" return postHighScore()">
+                <div>
+                    <label>Enter High Score</label>
+                    <input type="number" id="newScore">
+                </div>
+                <input type="submit">
+            </form>
         </div>
         <div class="fb-comments" data-href="http://www.gonutz-env.elasticbeanstalk.com/index/" data-width="500" data-numposts="10"></div>
     </body>
