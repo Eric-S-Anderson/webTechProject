@@ -17,6 +17,7 @@
 
     </head>
     <body>
+        
         <script>
             var FB;
             var highScore=0;
@@ -57,8 +58,8 @@
             
             window.fbAsyncInit = function() {
                 FB.init({
-                    appId      : '832926020159909 ',
-                    //appId      : '827551624030682',
+                    //appId      : '832926020159909 ',
+                    appId      : '827551624030682',
                     cookie     : true,
                     xfbml      : true,
                     version    : 'v2.5'
@@ -107,7 +108,7 @@
             function postHighScore(newScore){
                 //var newScore = 0;
                 //newScore = document.getElementById('newScore').value;
-                
+                console.log('submitted score');
                 //Score submitted so update button to reflect such and remove event listener
                 document.getElementById('submit-hiscore').innerHTML='Score Submitted!';
                 document.getElementById('submit-hiscore').removeEventListener('click', attemptSubmit);
@@ -150,6 +151,9 @@
       <div id="score">Loading...</div>
     </div>
 
+    <script type="text/javascript" src="js/input_mediator.js"></script>
+    <script type="text/javascript" src="js/collisions.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>    
     <script type="text/javascript" src="js/gamestate.js"></script>
     <script type="text/javascript" src="js/entities.js"></script>
     <script type="text/javascript" src="js/level.js"></script>
@@ -157,26 +161,29 @@
     <script type="text/javascript" src="js/resources.js"></script>
     <script type="text/javascript" src="js/input.js"></script>
     <script type="text/javascript" src="js/sprite.js"></script>
-    <script type="text/javascript" src="js/bootstrap.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
-    
-    
-    
+    <script type="text/javascript" src="js/entity_manager.js"></script>    
         
-        <!-- END GAME SECTION -->
+      <!--   END GAME SECTION -->
         
         </p>
 
     <div id="status">
-        <fb:login-button scope="public_profile,email,publish_actions" onlogin="checkLoginState();">
-        </fb:login-button>
-
 
         <!-- Display High Score -->
         <div id="highScore" class="score"></div>
         <script>document.querySelector('.score').innerHTML = 'Your Current High Score: ' + highScore;</script>
-                  
+
+       
+
+       
         
+  
+   
+            <fb:login-button scope="public_profile,email,publish_actions" onlogin="checkLoginState();" data-size="medium">
+        </fb:login-button>
+      <!--
+<div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="true"></div>
+       -->
         <div
             class="fb-like"
             data-share="true"
@@ -199,8 +206,11 @@
     -->
 
         <div class="fb-comments" data-href="http://www.gonutz-env.elasticbeanstalk.com/index/" data-width="500" data-numposts="10"></div>
+             
     </div>
         
         </div><!--main container-->
+    
+
     </body>
 </html>

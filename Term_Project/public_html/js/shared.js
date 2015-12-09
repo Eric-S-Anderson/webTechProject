@@ -75,10 +75,12 @@ BufferLoader.prototype.load = function() {
 function PlaySounds(context,soundsArray) {
   var ctx = this;
   var loader = new BufferLoader(context,soundsArray, onLoad);
+  var ready = false;
 
       function onLoad(buffers) {
         ctx.buffers = buffers;
-        loadGraphics();
+        loadGraphics();  //This causes graphics to load
+                
       };
       
       loader.load(); //Load sound files
