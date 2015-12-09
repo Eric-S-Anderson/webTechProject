@@ -5,14 +5,22 @@
 <html>
     <head>
         <title>Term Project</title>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" name="description" content="">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <link rel="stylesheet" type="text/css" title="Default" href="standard.css">
+        <!--<link rel="stylesheet" type="text/css" title="Default" href="standard.css">-->
+        <link rel="stylesheet" href="css/app.css">
+        
+        <!--jQuery Mobile-->      
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css">
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+
     </head>
     <body>
+        
         <script>
             var FB;
-            var highScore;
+            var highScore=0;
             // This is called with the results from from FB.getLoginStatus().
             function statusChangeCallback(response) {
                 console.log('statusChangeCallback');
@@ -50,7 +58,8 @@
             
             window.fbAsyncInit = function() {
                 FB.init({
-                    appId      : '832926020159909',
+                    //appId      : '832926020159909 ',
+                    appId      : '827551624030682',
                     cookie     : true,
                     xfbml      : true,
                     version    : 'v2.5'
@@ -96,9 +105,14 @@
                 );
             }
             
-            function postHighScore(){
-                var newScore = 0;
-                newScore = document.getElementById('newScore').value;
+            function postHighScore(newScore){
+                //var newScore = 0;
+                //newScore = document.getElementById('newScore').value;
+                
+                //Score submitted so update button to reflect such and remove event listener
+                document.getElementById('submit-hiscore').innerHTML='Score Submitted!';
+                document.getElementById('submit-hiscore').removeEventListener('click', attemptSubmit);
+                
                 if (newScore > highScore){
                     FB.api(
                         "/me/scores",
@@ -116,29 +130,85 @@
             }
         </script>
         <p>
-            This is where our project will appear!
-        </p>
-        <fb:login-button scope="public_profile,email,publish_actions" onlogin="checkLoginState();">
-        </fb:login-button>
 
-        <div id="status">
+    <div id="main-container">
+        <!-- BEGIN GAME SECTION -->
+        <div id="game-over-overlay">
         </div>
+
+    <div id="game-over">
+      <h1>GAME OVER</h1>
+      <button id="play-again">Play Again</button>
+      <button id="submit-hiscore">Post your score to Facebook</button>
+    </div>
+
+    <div class="wrapper">
+      <div id="instructions">
+          tap or space : shoot<br>
+          swipe or wasd : move
+      </div>
+
+      <div id="score">Loading...</div>
+    </div>
+
+    <script type="text/javascript" src="js/bootstrap.js"></script>    
+    <script type="text/javascript" src="js/gamestate.js"></script>
+    <script type="text/javascript" src="js/entities.js"></script>
+    <script type="text/javascript" src="js/level.js"></script>
+    <script type="text/javascript" src="js/shared.js"></script>
+    <script type="text/javascript" src="js/resources.js"></script>
+    <script type="text/javascript" src="js/input.js"></script>
+    <script type="text/javascript" src="js/sprite.js"></script>
+    <script type="text/javascript" src="js/entity_manager.js"></script>    
+        
+      <!--   END GAME SECTION -->
+        
+        </p>
+
+    <div id="status">
+
+        <!-- Display High Score -->
+        <div id="highScore" class="score"></div>
+        <script>document.querySelector('.score').innerHTML = 'Your Current High Score: ' + highScore;</script>
+
+       
+
+       
+        
+  
+   
+            <fb:login-button scope="public_profile,email,publish_actions" onlogin="checkLoginState();" data-size="medium">
+        </fb:login-button>
+      <!--
+<div class="fb-login-button" data-max-rows="1" data-size="medium" data-show-faces="false" data-auto-logout-link="true"></div>
+       -->
         <div
             class="fb-like"
             data-share="true"
             data-width="450"
             data-show-faces="true">
         </div>
-        <div id="highScore" class="score"></div>
-        <div>
+        
+
+    <!--
+        
+    
+        <div id="submit-score">
             <form onsubmit=" return postHighScore()">
                 <div>
-                    <label>Enter High Score</label>
-                    <input type="number" id="newScore">
+                    <input type="number" id="newScore" hidden=true data-role=none>
                 </div>
-                <input type="submit">
+                <input type="submit" id="submitNewScore" value="Post your score to Facebook">
             </form>
         </div>
+    -->
+
         <div class="fb-comments" data-href="http://www.gonutz-env.elasticbeanstalk.com/index/" data-width="500" data-numposts="10"></div>
+             
+    </div>
+        
+        </div><!--main container-->
+    
+
     </body>
 </html>
