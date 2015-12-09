@@ -1,5 +1,3 @@
-
-
 var Entity = function () {
     //superclass for all game entities
     this.pos = [0, 0];                  //array containing x and y coords of object as int
@@ -7,10 +5,10 @@ var Entity = function () {
     this.speed = 0;                     //speed of object
     this.dir = 0;                       //direction of object in radians
     this.fireSpeed = 0;                 //if objects spawns a projectile, how fast can it spawn them
-    this.lastFire = new Date();         //last time object spawned a projectile
+    this.lastFire = null;         //last time object spawned a projectile
     this.triggersLvlEnd = false;        //if this object is destroyed does the level end
     this.triggersGameEnd = false;       //if this object is destroyed does game end (player and final boss)
-    this.destroySpawn = new Entity();   //Entity to spawn when this entity is destroyed
+    this.destroySpawn = null;   //Entity to spawn when this entity is destroyed
     this.sprite = new Sprite();         //Sprite object related to this entity
     this.soundIndex = 0;                //index of related sound
     this.health = 0;                    //object's health
@@ -27,7 +25,7 @@ Entity.prototype.Destroy = function () {
     //checks game end var and if true calls GameState.GameOver, 
     //checks level end var and if true then calls GameState.NextLevel
     
-    EntityManager.Spawn(this.destroySpawn);
+    entityManager.Spawn(this.destroySpawn);
     GameState.score += this.scoreValue;
     if (this.triggersGameEnd){
         GameState.GameOver();
@@ -39,7 +37,7 @@ Entity.prototype.Destroy = function () {
 
 Entity.prototype.Clear = function () {
     //deletes this object (no animations, or sounds)
-    
+    //Splice performed in entityManager upon true update self
     
 };
 
@@ -76,8 +74,8 @@ Entity.prototype.UpdateSprite = function (elapsed) {
     //translates context to entity position, 
     //renders sprite via sprite.Render(ctx), 
     //restores context
-    
-    this.sprite.Update(elapsed);
+
+    this.sprite.update(elapsed);
     
 };
 
@@ -90,20 +88,23 @@ Entity.prototype.UpdateSelf = function (elapsed) {
     // check health to determine if<0 and 
     // if so calls Destroy() and returns 'true' to calling function 
     // which will be EntityManager.UpdateEntities()
-    
+                
     this.age += elapsed;
-    this.AILogic();
+    this.AILogic(elapsed);
+    
     if (this.CheckOffscreen()){
-        this.Clear();
+        return true; //tell entityManager to clear
     }
+    
     this.UpdateSprite(elapsed);
-    if (this.takesDamage){
-        Collisions.ExecuteCollision(this);
-    }
+    //if (this.takesDamage){
+    //    Collisions.ExecuteCollision(this);
+    //}
     if (this.health <= 0){
         this.Destroy();
         return true;
     }
+    
 };
 
 Entity.prototype.Spawn = function (position, direction) {
@@ -140,9 +141,11 @@ PlayerAvatar.prototype.Spawn = function (position, direction){
     this.health = 100;
     this.fireSpeed = 0.2;
     this.takesDamage = true;
+    this.givesDamage = 5;
     this.triggersGameEnd = true;
     this.soundIndex = 0;
     this.sprite = new Sprite();
+    this.collideType = 1; //enemy
 };
 
 PlayerAvatar.prototype.UpdateSelf = function (elapsed){
@@ -218,10 +221,9 @@ Explosion.prototype.UpdateSelf = function (elapsed){
 };
 
 
-
 function Enemy(){
     //enemy constructor
-    
+
     Entity.call(this);
     
 };
@@ -234,17 +236,23 @@ Enemy.prototype.Spawn = function (position, direction){
     
     this.pos = position;
     this.dir = direction;
-    this.speed = 5;
+    this.speed = 150 * (Math.random() + 1);
     this.health = 25;
     this.takesDamage = true;
     this.scoreValue = 50;
     this.givesDamage = 15;
     this.destroySpawn = new Explosion();
     this.soundIndex = 0;
-    this.sprite = new Sprite();
+    this.sprite = new Sprite('img/tank.png', [0, 118], [118, 118], 8, [0, 1]);
+
+    
 };
 
-Enemy.prototype.UpdateSelf = function (elapsed){    
-    
-    
-};
+Enemy.prototype.AILogic = function (elapsed){
+    this.pos[0] -= this.speed * elapsed;
+    console.log(this.speed);
+}
+
+
+
+
